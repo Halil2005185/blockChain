@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Tailwind v4 turns each --color-* into utilities,
+ * e.g. --color-surface -> bg-surface, text-surface, border-surface.
+ * Status colours carry meaning across the whole UI:
+ *   valid = green, invalid = red, untrusted = orange, mining = amber, genesis = violet.
+ */
+@theme {
+  --color-bg: #07090d;
+  --color-surface: #0d1117;
+  --color-surface-2: #131a24;
+  --color-border: #1e2632;
+  --color-border-strong: #2c3747;
+  --color-fg: #e6edf3;
+  --color-muted: #8b97a8;
+  /* Lightened from #5d6878 (3.1:1) to pass WCAG AA (≥4.5:1) on every surface,
+     while staying dimmer than --color-muted. */
+  --color-subtle: #77859a;
+
+  --color-accent: #38bdf8;
+  --color-valid: #34d399;
+  --color-invalid: #f87171;
+  --color-untrusted: #fb923c;
+  --color-mining: #fbbf24;
+  --color-genesis: #a78bfa;
+
+  /* Fonts with good Arabic glyphs first (installed with Windows / macOS / Android). */
+  --font-sans: "Segoe UI", Tahoma, "Noto Sans Arabic", "Geeza Pro", ui-sans-serif, system-ui, -apple-system, Roboto,
+    Arial, sans-serif;
+  /* Code fonts have no Arabic letters; the Arabic fonts after them render any Arabic words. */
+  --font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, "Segoe UI",
+    Tahoma, "Noto Sans Arabic", monospace;
+
+  --animate-pulse-glow: pulse-glow 1.6s ease-in-out infinite;
+  --animate-enter: enter 0.45s ease-out both;
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-mining) 45%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 22px 2px color-mix(in oklab, var(--color-mining) 30%, transparent);
+    }
+  }
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    /* Faint engineering grid, like a blueprint / dev-tool canvas. */
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--color-border) 35%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-border) 35%, transparent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-attachment: fixed;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Arabic letters join together; extra letter-spacing breaks the joins. */
+[dir="rtl"] .tracking-wider,
+[dir="rtl"] .tracking-tight {
+  letter-spacing: normal;
+}
+
+/* Thin, dark scrollbars for scrollable panels. */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
